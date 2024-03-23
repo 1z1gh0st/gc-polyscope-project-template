@@ -11,12 +11,12 @@
 
 Dowload the code:
 ```
-git clone --recursive https://github.com/1z1gh0st/swn
+git clone --recursive https://github.com/1z1gh0st/gc-polyscope-project-template
 ```
 
 Build the code:
 ```
-cd swn
+cd gc-polyscope-project-template
 mkdir build
 cd build
 cmake ..
@@ -156,6 +156,88 @@ Although the majority of the algorithms do have an implementation, there are run
 - The Darboux derivative is being computed.
 
 The step that follows is where there are runtime errors of which I have not yet been able to debug.
+
+Here is the output thus far:
+```
+❯ ./build/bin/gc_project data/bun_zipper.ply
+[polyscope] Backend: openGL3_glfw -- Loaded openGL version: 4.1 Metal - 88
+Loop initialized!
+Gamma[e_0]=1
+Gamma[e_1]=1
+Gamma[e_2]=1
+Gamma[e_3]=1
+Gamma[e_4]=1
+Reduced coordinates computed!
+c[c_0]=1
+c[c_1]=-1
+c[c_3]=-1
+c[c_7]=-1
+c[c_1653]=-1
+c[c_5913]=-1
+c[c_5914]=-1
+c[c_7451]=-1
+c[c_76058]=-1
+c[c_76063]=-1
+c[c_77743]=-1
+c[c_81856]=-1
+c[c_139531]=-1
+c[c_188085]=-1
+c[c_201481]=-1
+...
+```
+The next step of solving the jump equation takes much much longer, but it does eventually complete.
+```
+Initial jump equation solved!
+u[c_0]=1
+u[c_1]=-1
+u[c_3]=-1
+u[c_7]=-1
+u[c_1653]=-1
+u[c_5913]=-1
+u[c_5914]=-1
+u[c_7451]=-1
+u[c_76058]=-1
+u[c_76063]=-1
+u[c_77743]=-1
+u[c_81856]=-1
+u[c_139531]=-1
+u[c_188085]=-1
+u[c_201481]=-1
+...
+```
+And the next step takes longer still, but does eventually terminate:
+```
+...
+Edge e_104222 has value 0 in function omega : E -> R
+Edge e_104223 has value 0 in function omega : E -> R
+Edge e_104224 has value 0 in function omega : E -> R
+Edge e_104225 has value 0 in function omega : E -> R
+Edge e_104226 has value 0 in function omega : E -> R
+Edge e_104227 has value 0 in function omega : E -> R
+Edge e_104228 has value 0 in function omega : E -> R
+Edge e_104229 has value 0 in function omega : E -> R
+Edge e_104230 has value 0 in function omega : E -> R
+Edge e_104231 has value 0 in function omega : E -> R
+Edge e_104232 has value 0 in function omega : E -> R
+Edge e_104233 has value 0 in function omega : E -> R
+Edge e_104234 has value 0 in function omega : E -> R
+Edge e_104235 has value 0 in function omega : E -> R
+Edge e_104236 has value 0 in function omega : E -> R
+Edge e_104237 has value 0 in function omega : E -> R
+Edge e_104238 has value 0 in function omega : E -> R
+Edge e_104239 has value 0 in function omega : E -> R
+Edge e_104240 has value 0 in function omega : E -> R
+Edge e_104241 has value 0 in function omega : E -> R
+Edge e_104242 has value 0 in function omega : E -> R
+Edge e_104243 has value 0 in function omega : E -> R
+...
+```
+Admittedly, this output should omit values with 0, but at least it is proof that this function terminates. It is at the next step that the program crashes:
+```
+libc++abi: terminating due to uncaught exception of type std::runtime_error: GC_SAFETY_ASSERT FAILURE from /MY_PATH/gc-polyscope-project-template/deps/geometry-central/src/../include/geometrycentral/surface/vertex_position_geometry.ipp:67 - faces must be triangular
+[1]    24920 abort      ./build/bin/gc_project data/bun_zipper.ply
+```
+This is a curious error, as I thought each triangle in the bunny mesh I had was triangular, so I will want to ensure that this is case somewhere prior in code to avoid this runtime error. That is, assuming that this is truly the cause of the error!
 
 ## Discussion
 Working on this process has been fruitful and quite illustrative, though I regret that it is not in a complete state at the time of writing. I intend to continue my work and finish this implementation over the coming weeks. I believe the use of matrices from the [Eigen library]() will be much more efficient regarding implementation, and I will be able to solve the errors I am currently getting through a careful debugging process. Furthermore, I can serialize and dump all info on the various functions that I compute on different mesh data structures. Then I can compare these results with the author's implementation, and see if I am getting the same results. Hopefully, the scope of this project need not expand much further, and the program will be working soon!
